@@ -61,12 +61,13 @@ void JumpEvaluator::UpdateData(k4abt_body_t selectedBody, uint64_t currentTimest
     if (m_jumpStatus == JumpStatus::EvaluateAndReview)
     {
         JumpResultsData jumpResults = CalculateJumpResults();
-        PrintJumpResults(jumpResults);
+        //PrintJumpResults(jumpResults);
+        PrintWalkResults(); 
 
-        if (jumpResults.JumpSuccess)
-        {
-            ReviewJumpResults(jumpResults);
-        }
+        //if (jumpResults.JumpSuccess)
+        //{
+          //  ReviewJumpResults(jumpResults);
+        //}
         m_jumpStatus = JumpStatus::Idle;
     }
 }
@@ -190,13 +191,19 @@ void JumpEvaluator::PrintJumpResults(const JumpResultsData& jumpResults)
         std::cout << "Jump Analysis Failed! Please try again!" << std::endl;
         std::cout << "-----------------------------------------" << std::endl;
     }
+    SavePotionValues();
+}
 
+void JumpEvaluator::PrintWalkResults()
+{
+    std::cout << "jump has been completed" << std::endl;
+    SavePotionValues();
 }
 
 void JumpEvaluator::ReviewJumpResults(const JumpResultsData& jumpResults)
 {
-    CreateRenderWindow(m_window3dSquatPose, "Squat Pose", m_listOfBodyPositions[jumpResults.SquatPointIndex], 0, jumpResults.StandingPosition);
-    CreateRenderWindow(m_window3dJumpPeakPose, "Jump Peak Pose", m_listOfBodyPositions[jumpResults.PeakIndex], 1, jumpResults.StandingPosition);
+    //CreateRenderWindow(m_window3dSquatPose, "Squat Pose", m_listOfBodyPositions[jumpResults.SquatPointIndex], 0, jumpResults.StandingPosition);
+    //CreateRenderWindow(m_window3dJumpPeakPose, "Jump Peak Pose", m_listOfBodyPositions[jumpResults.PeakIndex], 1, jumpResults.StandingPosition);
     CreateRenderWindow(m_window3dReplay, "Replay", m_listOfBodyPositions[0], 2, jumpResults.StandingPosition);
 
     milliseconds duration = milliseconds::zero();
@@ -223,8 +230,8 @@ void JumpEvaluator::ReviewJumpResults(const JumpResultsData& jumpResults)
             duration = milliseconds::zero();
         }
 
-        m_window3dSquatPose.Render();
-        m_window3dJumpPeakPose.Render();
+        //m_window3dSquatPose.Render();
+        //m_window3dJumpPeakPose.Render();
         m_window3dReplay.Render();
 
         duration += duration_cast<milliseconds>(high_resolution_clock::now() - start);
@@ -266,7 +273,7 @@ int JumpEvaluator::DetermineCalculationWindowWidth(int jumpStartIndex, const std
 
 void JumpEvaluator::SavePotionValues()
 {
-
+    const float UsecToSecond = 1e-6f;
     float Xpos, Ypos, Zpos = 0;
     float timestamp = 0.0;
     string jointList[] = { "AnkleLeftX", "AnkleLeftY", "AnkleLeftZ",
@@ -278,7 +285,7 @@ void JumpEvaluator::SavePotionValues()
 
 
     ofstream outfile;
-    outfile.open("../../../positionData.csv");
+    outfile.open("../../../positionDataSquatThree.csv");
     outfile << R"(AnkleLeftX,AnkleLeftY,AnkleLeftZ,AnkleRightX,AnkleRightY,AnkleRightZ,KneeRightX,KneeRightY,KneeRightZ,KneeLeftX,KneeLeftY,KneeLeftZ,timestamp)" << endl;
     int joints[] = { (int)K4ABT_JOINT_ANKLE_LEFT, (int)K4ABT_JOINT_ANKLE_RIGHT,
         (int)K4ABT_JOINT_KNEE_RIGHT, (int)K4ABT_JOINT_KNEE_LEFT,
@@ -303,7 +310,7 @@ void JumpEvaluator::SavePotionValues()
                     count += 3;
                 }
                 else if (count >= 18) {
-                    timestamp = m_framesTimestampInUsec[i];
+                    timestamp = m_framesTimestampInUsec[i] * UsecToSecond;
                     outfile << to_string(timestamp) << endl;
                     break;
                 }

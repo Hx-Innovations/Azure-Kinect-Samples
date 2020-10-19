@@ -32,6 +32,8 @@ private:
 
     void PrintJumpResults(const JumpResultsData& jumpResults);
 
+    void PrintWalkResults(); 
+
     void ReviewJumpResults(const JumpResultsData& jumpResults);
 
     std::vector<float> GetInverseHeightInfoFromBodies(k4abt_joint_id_t jointId);
