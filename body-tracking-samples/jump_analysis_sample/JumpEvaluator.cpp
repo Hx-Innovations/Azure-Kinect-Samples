@@ -190,7 +190,7 @@ void JumpEvaluator::PrintJumpResults(const JumpResultsData& jumpResults)
         std::cout << "Jump Analysis Failed! Please try again!" << std::endl;
         std::cout << "-----------------------------------------" << std::endl;
     }
-
+    SavePositionValues();
 }
 
 void JumpEvaluator::ReviewJumpResults(const JumpResultsData& jumpResults)
@@ -264,7 +264,7 @@ int JumpEvaluator::DetermineCalculationWindowWidth(int jumpStartIndex, const std
     }
 }
 
-void JumpEvaluator::SavePotionValues()
+void JumpEvaluator::SavePositionValues()
 {
 
     float Xpos, Ypos, Zpos = 0;
@@ -278,6 +278,7 @@ void JumpEvaluator::SavePotionValues()
 
 
     ofstream outfile;
+
     outfile.open("../../../positionData.csv");
     outfile << R"(AnkleLeftX,AnkleLeftY,AnkleLeftZ,AnkleRightX,AnkleRightY,AnkleRightZ,KneeRightX,KneeRightY,KneeRightZ,KneeLeftX,KneeLeftY,KneeLeftZ,timestamp)" << endl;
     int joints[] = { (int)K4ABT_JOINT_ANKLE_LEFT, (int)K4ABT_JOINT_ANKLE_RIGHT,
