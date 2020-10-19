@@ -6,6 +6,9 @@
 #include <algorithm>
 #include <iostream>
 #include <stdexcept>
+#include <fstream>
+using namespace std;
+#include <string>
 
 #include "DigitalSignalProcessing.h"
 
@@ -259,6 +262,55 @@ int JumpEvaluator::DetermineCalculationWindowWidth(int jumpStartIndex, const std
     {
         throw std::runtime_error("Data error");
     }
+}
+
+void JumpEvaluator::SavePotionValues()
+{
+
+    float Xpos, Ypos, Zpos = 0;
+    float timestamp = 0.0;
+    string jointList[] = { "AnkleLeftX", "AnkleLeftY", "AnkleLeftZ",
+        "AnkleRightX", "AnkleRightY", "AnkleRightZ",
+        "KneeRightX", "KneeRightY", "KneeRightZ",
+        "KneeLeftX", "KneeLeftY", "KneeLeftZ",
+        "HipRightX", "HipRightY", "HipRightZ",
+        "HipLeftX", "HipLeftY", "HipLeftZ" };
+
+
+    ofstream outfile;
+    outfile.open("../../../positionData.csv");
+    outfile << R"(AnkleLeftX,AnkleLeftY,AnkleLeftZ,AnkleRightX,AnkleRightY,AnkleRightZ,KneeRightX,KneeRightY,KneeRightZ,KneeLeftX,KneeLeftY,KneeLeftZ,timestamp)" << endl;
+    int joints[] = { (int)K4ABT_JOINT_ANKLE_LEFT, (int)K4ABT_JOINT_ANKLE_RIGHT,
+        (int)K4ABT_JOINT_KNEE_RIGHT, (int)K4ABT_JOINT_KNEE_LEFT,
+        (int)K4ABT_JOINT_HIP_LEFT, (int)K4ABT_JOINT_HIP_RIGHT };
+
+
+    for (size_t i = 0; i < m_listOfBodyPositions.size(); i++)
+    {
+
+        int count = 0;
+        for (int j = 0; j < sizeof(joints); j++) {
+            int joint = joints[j];
+            {
+                if (count < 18)
+                {
+                    Xpos = m_listOfBodyPositions[i].skeleton.joints[joint].position.xyz.x;
+                    Ypos = -m_listOfBodyPositions[i].skeleton.joints[joint].position.xyz.y;
+                    Zpos = m_listOfBodyPositions[i].skeleton.joints[joint].position.xyz.z;
+                    string ankleString = to_string(Xpos) + "," + to_string(Ypos) + "," + to_string(Zpos) + ",";
+                    cout << ankleString << endl;
+                    outfile << ankleString;
+                    count += 3;
+                }
+                else if (count >= 18) {
+                    timestamp = m_framesTimestampInUsec[i];
+                    outfile << to_string(timestamp) << endl;
+                    break;
+                }
+            }
+        }
+    }
+    outfile.close();
 }
 
 float JumpEvaluator::GetMinKneeAngleFromBody(k4abt_body_t body)
