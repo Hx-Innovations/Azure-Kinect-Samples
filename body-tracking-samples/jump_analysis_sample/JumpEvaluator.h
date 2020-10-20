@@ -51,7 +51,7 @@ private:
 
     k4a_float3_t CalculateStandingPosition(int jumpStartIndex, int firstSquatIndex);
 
-    void SavePotionValues();
+    void SavePositionValues();
 
     void CreateRenderWindow(
         Window3dWrapper& window,

@@ -9,7 +9,7 @@
 #include <fstream>
 using namespace std;
 #include <string>
-
+#include <ctime>
 #include "DigitalSignalProcessing.h"
 
 using namespace Visualization;
@@ -269,6 +269,21 @@ void JumpEvaluator::SavePositionValues()
 
     float Xpos, Ypos, Zpos = 0;
     float timestamp = 0.0;
+    //time_t now = time(0);
+    //struct tm buf; 
+    //asctime(&buf);
+    //tm* ltm = localtime(&buf, &now);
+    //float year = 1900 + ltm->tm_year;
+    //float month = 1 + ltm->tm_mon; 
+    //float day = ltm->tm_mday;
+    //float hour = 5 + ltm->tm_hour; 
+    //float min = 30 + ltm->tm_min;
+    //float seconds = ltm->tm_sec;
+    //loat startTime = seconds;
+    //string datetimestamp = to_string(year) + "-" + to_string(month) + "-" + to_string(day) + "-" + to_string(hour) + "-" +
+    //    to_string(min) + "-" + to_string(seconds);
+    
+
     string jointList[] = { "AnkleLeftX", "AnkleLeftY", "AnkleLeftZ",
         "AnkleRightX", "AnkleRightY", "AnkleRightZ",
         "KneeRightX", "KneeRightY", "KneeRightZ",
@@ -279,10 +294,10 @@ void JumpEvaluator::SavePositionValues()
 
     ofstream outfile;
 
-    outfile.open("../../../positionData.csv");
-    outfile << R"(AnkleLeftX,AnkleLeftY,AnkleLeftZ,AnkleRightX,AnkleRightY,AnkleRightZ,KneeRightX,KneeRightY,KneeRightZ,KneeLeftX,KneeLeftY,KneeLeftZ,timestamp)" << endl;
+    outfile.open("../../../positionDataTimestamp.csv");
+    outfile << R"(AnkleLeftX,AnkleLeftY,AnkleLeftZ,AnkleRightX,AnkleRightY,AnkleRightZ,KneeLeftX,KneeLeftY,KneeLeftZ,KneeRightX,KneeRightY,KneeRightZ,HipLeftX,HipLeftY,HipLefttZ,HipRightX,HipRightY,HipRightZ,timestamp)" << endl;
     int joints[] = { (int)K4ABT_JOINT_ANKLE_LEFT, (int)K4ABT_JOINT_ANKLE_RIGHT,
-        (int)K4ABT_JOINT_KNEE_RIGHT, (int)K4ABT_JOINT_KNEE_LEFT,
+        (int)K4ABT_JOINT_KNEE_LEFT,(int)K4ABT_JOINT_KNEE_RIGHT, 
         (int)K4ABT_JOINT_HIP_LEFT, (int)K4ABT_JOINT_HIP_RIGHT };
 
 
@@ -299,13 +314,25 @@ void JumpEvaluator::SavePositionValues()
                     Ypos = -m_listOfBodyPositions[i].skeleton.joints[joint].position.xyz.y;
                     Zpos = m_listOfBodyPositions[i].skeleton.joints[joint].position.xyz.z;
                     string ankleString = to_string(Xpos) + "," + to_string(Ypos) + "," + to_string(Zpos) + ",";
-                    cout << ankleString << endl;
+                    //cout << ankleString << endl;
                     outfile << ankleString;
                     count += 3;
                 }
                 else if (count >= 18) {
+                    time_t now = time(0);
+                    tm localTime;
+                    now = time(NULL);
+                    localtime_s(&localTime, &now);
+                    int date = localtime_s(&localTime, &now);
+                    int seconds = (&localTime)->tm_sec; 
+                    int hour = (&localTime)->tm_hour; 
+                    int year = 1900 + (&localTime)->tm_year;;
+
                     timestamp = m_framesTimestampInUsec[i];
-                    outfile << to_string(timestamp) << endl;
+                    outfile<< to_string(timestamp) << endl;
+                    //string dateTimestampTwo = to_string(year) + "," + "year" + "," + to_string(seconds) + "," + "seconds";
+                    //outfile << to_string(date) << seconds << year << endl;
+                    //outfile << dateTimestampTwo << endl; 
                     break;
                 }
             }
