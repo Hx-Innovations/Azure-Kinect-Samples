@@ -291,10 +291,14 @@ void JumpEvaluator::SavePositionValues()
         "HipRightX", "HipRightY", "HipRightZ",
         "HipLeftX", "HipLeftY", "HipLeftZ" };
 
-
+    // Setup ofstream to save file to the location of the body
     ofstream outfile;
-
-    outfile.open("../../../positionDataTimestamp.csv");
+    string Filename; 
+    cout << "What do you want to name the file?" << endl; 
+    cout << "Type File Name here: "; 
+    cin >> Filename; 
+    Filename = "C:/Users/Info/Desktop/SquatData/" + Filename + ".csv";
+    outfile.open(Filename);
     outfile << R"(AnkleLeftX,AnkleLeftY,AnkleLeftZ,AnkleRightX,AnkleRightY,AnkleRightZ,KneeLeftX,KneeLeftY,KneeLeftZ,KneeRightX,KneeRightY,KneeRightZ,HipLeftX,HipLeftY,HipLefttZ,HipRightX,HipRightY,HipRightZ,timestamp)" << endl;
     int joints[] = { (int)K4ABT_JOINT_ANKLE_LEFT, (int)K4ABT_JOINT_ANKLE_RIGHT,
         (int)K4ABT_JOINT_KNEE_LEFT,(int)K4ABT_JOINT_KNEE_RIGHT, 
