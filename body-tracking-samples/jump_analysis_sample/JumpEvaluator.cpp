@@ -303,7 +303,7 @@ void JumpEvaluator::SavePositionValues()
     int joints[] = { (int)K4ABT_JOINT_ANKLE_LEFT, (int)K4ABT_JOINT_ANKLE_RIGHT,
         (int)K4ABT_JOINT_KNEE_LEFT,(int)K4ABT_JOINT_KNEE_RIGHT, 
         (int)K4ABT_JOINT_HIP_LEFT, (int)K4ABT_JOINT_HIP_RIGHT };
-
+    float startTime = m_framesTimestampInUsec[0];
 
     for (size_t i = 0; i < m_listOfBodyPositions.size(); i++)
     {
@@ -332,7 +332,7 @@ void JumpEvaluator::SavePositionValues()
                     int hour = (&localTime)->tm_hour; 
                     int year = 1900 + (&localTime)->tm_year;;
 
-                    timestamp = m_framesTimestampInUsec[i];
+                    timestamp = (m_framesTimestampInUsec[i] - startTime) * pow(10,-6);
                     outfile<< to_string(timestamp) << endl;
                     //string dateTimestampTwo = to_string(year) + "," + "year" + "," + to_string(seconds) + "," + "seconds";
                     //outfile << to_string(date) << seconds << year << endl;

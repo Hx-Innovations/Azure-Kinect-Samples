@@ -69,6 +69,7 @@ int main()
     k4a_device_configuration_t deviceConfig = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
     deviceConfig.depth_mode = K4A_DEPTH_MODE_WFOV_2X2BINNED;
     deviceConfig.color_resolution = K4A_COLOR_RESOLUTION_OFF;
+    deviceConfig.camera_fps = K4A_FRAMES_PER_SECOND_30;
     VERIFY(k4a_device_start_cameras(device, &deviceConfig), "Start K4A cameras failed!");
 
     // Get calibration information
